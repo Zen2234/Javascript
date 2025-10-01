@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lämpötilamuunnin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h1 {
+      color: #333333;
+    }
+    label, select, input {
+      display: block;
+      margin: 10px 0;
+    }
+    #tulos, #virhe {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Lämpötilamuunnin</h1>
+
+  <label for="lampotila">Anna lämpötila:</label>
+  <input type="text" id="lampotila" placeholder="Esim. 25">
+
+  <label for="suunta">Muunna:</label>
+  <select id="suunta">
+    <option value="CtoF">Celsius → Fahrenheit</option>
+    <option value="FtoC">Fahrenheit → Celsius</option>
+  </select>
+
+  <button onclick="muunnaLampotila()">Muunna</button>
+
+  <div id="tulos"></div>
+  <div id="virhe"></div>
+
+  <script>
+    function muunnaLampotila() {
+      const lampotilaInput = document.getElementById("lampotila").value.trim();
+      const suunta = document.getElementById("suunta").value;
+      const tulosDiv = document.getElementById("tulos");
+      const virheDiv = document.getElementById("virhe");
+
+      tulosDiv.textContent = "";
+      virheDiv.textContent = "";
+
+      const arvo = parseFloat(lampotilaInput);
+
+      if (lampotilaInput === "") {
+        virheDiv.textContent = "Anna lämpötila.";
+        return;
+      }
+
+      if (isNaN(arvo)) {
+        virheDiv.textContent = "Syötä kelvollinen lukuarvo.";
+        return;
+      }
+
+      if (suunta === "CtoF" && arvo < -273.15) {
+        virheDiv.textContent = "Lämpötila ei voi olla alle -273,15 °C (absoluuttinen nollapiste).";
+        return;
+      }
+
+      if (suunta === "FtoC" && arvo < -459.67) {
+        virheDiv.textContent = "Lämpötila ei voi olla alle -459,67 °F (absoluuttinen nollapiste).";
+        return;
+      }
+
+      let muunnettu;
+      if (suunta === "CtoF") {
+        muunnettu = (arvo * 9/5) + 32;
+        tulosDiv.textContent = `${arvo.toFixed(2)} °C = ${muunnettu.toFixed(2)} °F`;
+      } else {
+        muunnettu = (arvo - 32) * 5/9;
+        tulosDiv.textContent = `${arvo.toFixed(2)} °F = ${muunnettu.toFixed(2)} °C`;
+      }
+    }
+  </script>
+
+</body>
+</html>
