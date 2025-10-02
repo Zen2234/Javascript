@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lomakkeen validointi</title>
+  <style>
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rekisteröitymislomake</h1>
+  <h4>Siirry kentästä toiseen tab-näppäimellä</h4>
+
+  <form action="/lähetä" method="post" onsubmit="return validateForm()">
+    <label for="käyttäjäid">Käyttäjä ID:</label>
+    <input type="text" id="käyttäjäid" name="käyttäjäid" required>
+    <div class="error" id="idError"></div>
+    <br><br>
+
+    <label for="salasana">Salasana:</label>
+    <input type="password" id="salasana" name="salasana" required>
+    <div class="error" id="passwordError"></div>
+    <br><br>
+
+    <label for="nimi">Nimi:</label>
+    <input type="text" id="nimi" name="nimi" required>
+    <div class="error" id="nameError"></div>    
+    <br><br>
+
+    <label for="osoite">Osoite:</label>
+    <input type="text" id="osoite" name="osoite" required>
+    <div class="error" id="addressError"></div>
+    <br><br>
+
+    <label for="maa">Maa:</label>
+    <select id="country" name="country" required>
+      <option value="">Valitse maa</option>
+      <option value="FI">Suomi</option>
+      <option value="SE">Ruotsi</option>
+      <option value="NO">Norja</option>
+      <option value="DK">Tanska</option>
+      <option value="US">Yhdysvallat</option>
+      <option value="GB">Iso-Britannia</option>
+    </select>
+    <div class="error" id="countryError"></div>
+    <br><br>
+
+    <label for="postinumero">Postinumero:</label>
+    <input type="text" id="postinumero" name="postinumero" required>
+    <div class="error" id="postalError"></div>
+    <br><br>
+
+    <label for="sähköposti">Sähköposti:</label>
+    <input type="email" id="sähköposti" name="sähköposti" required>
+    <div class="error" id="emailError"></div>
+    <br><br>
+
+    <label for="sukupuoli">Sukupuoli:</label>
+    <input type="radio" id="mies" name="sukupuoli" value="mies">
+    <label for="mies">Mies</label>
+    <input type="radio" id="nainen" name="sukupuoli" value="nainen">
+    <label for="nainen">Nainen</label>
+    <div class="error" id="genderError"></div>
+    <br><br>
+
+    <label for="kieli">Kieli:</label>
+    <input type="radio" id="suomi" name="kieli" value="suomi">
+    <label for="suomi">Suomi</label>
+    <input type="radio" id="muu" name="kieli" value="muu kuin suomi">
+    <label for="muu">Muu kuin suomi</label>
+    <div class="error" id="languageError"></div>
+    <br><br>
+
+    <label for="lisätietoja">Lisätietoja:</label>
+    <textarea id="lisätietoja" name="lisätietoja" rows="4" cols="50"></textarea>
+    <br><br>
+
+    <input type="submit" value="Lähetä">
+  </form>
+
+  <script>
+    function validateForm() {
+      let isValid = true;
+
+      const errorFields = [
+        'idError', 'passwordError', 'nameError', 'addressError',
+        'countryError', 'postalError', 'emailError',
+        'genderError', 'languageError'
+      ];
+      errorFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '';
+      });
+
+      const käyttäjäid = document.getElementById('käyttäjäid').value.trim();
+      if (käyttäjäid.length < 6) {
+        document.getElementById('idError').textContent = 'Käyttäjä ID:n tulee olla vähintään 6 merkkiä.';
+        isValid = false;
+      }
+
+      const password = document.getElementById('salasana').value;
+      const passwordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@£$€&%#]).{6,}$/;
+      if (!passwordPattern.test(password)) {
+        document.getElementById('passwordError').textContent = 'Salasanan tulee olla vähintään 6 merkkiä ja sisältää iso kirjain, numero ja erikoismerkki (!@£$€&%#).';
+        isValid = false;
+      }
+
+      const postalCode = document.getElementById('postinumero').value.trim();
+      const postalPattern = /^\d{5}$/;
+      if (!postalPattern.test(postalCode)) {
+        document.getElementById('postalError').textContent = 'Postinumeron tulee olla 5 numeroa.';
+        isValid = false;
+      }
+
+      const email = document.getElementById('sähköposti').value.trim();
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        document.getElementById('emailError').textContent = 'Syötä kelvollinen sähköpostiosoite.';
+        isValid = false;
+      }
+
+      const country = document.getElementById('country').value;
+      if (country === '') {
+        document.getElementById('countryError').textContent = 'Valitse maa.';
+        isValid = false;
+      }
+
+      const genderSelected = document.querySelector('input[name="sukupuoli"]:checked');
+      if (!genderSelected) {
+        document.getElementById('genderError').textContent = 'Valitse sukupuoli.';
+        isValid = false;
+      }
+
+      const languageSelected = document.querySelector('input[name="kieli"]:checked');
+      if (!languageSelected) {
+        document.getElementById('languageError').textContent = 'Valitse kieli.';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+  </script>
+</body>
+</html>
